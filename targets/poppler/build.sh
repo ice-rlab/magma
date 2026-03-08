@@ -20,7 +20,9 @@ mkdir -p "$WORK/lib" "$WORK/include"
 
 pushd "$TARGET/freetype2"
 ./autogen.sh
-./configure --prefix="$WORK" --disable-shared PKG_CONFIG_PATH="$WORK/lib/pkgconfig"
+./configure --prefix="$WORK" --disable-shared \
+    --with-brotli=no \
+    PKG_CONFIG_PATH="$WORK/lib/pkgconfig"
 make -j$(nproc) clean
 make -j$(nproc)
 make install
@@ -32,6 +34,11 @@ rm -rf *
 EXTRA=""
 test -n "$AR" && EXTRA="$EXTRA -DCMAKE_AR=$AR"
 test -n "$RANLIB" && EXTRA="$EXTRA -DCMAKE_RANLIB=$RANLIB"
+
+ICONV_LIB="/usr/lib/$(gcc -print-multiarch)/libc.so"
+if [ ! -f "$ICONV_LIB" ]; then
+    ICONV_LIB="/usr/lib/aarch64-linux-gnu/libc.so"
+fi
 
 cmake "$TARGET/repo" \
   $EXTRA \
@@ -56,7 +63,7 @@ cmake "$TARGET/repo" \
   -DWITH_NSS3=OFF \
   -DFREETYPE_INCLUDE_DIRS="$WORK/include/freetype2" \
   -DFREETYPE_LIBRARY="$WORK/lib/libfreetype.a" \
-  -DICONV_LIBRARIES="/usr/lib/x86_64-linux-gnu/libc.so" \
+  -DICONV_LIBRARIES="$ICONV_LIB" \
   -DCMAKE_EXE_LINKER_FLAGS_INIT="$LIBS"
 make -j$(nproc) poppler poppler-cpp pdfimages pdftoppm
 EXTRA=""

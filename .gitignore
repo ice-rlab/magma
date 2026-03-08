@@ -1,0 +1,12 @@
+fuzzers/afl/src/*.o
+magma/*.o
+magma/*.a
+targets/libtiff/out*/
+targets/libtiff/repo/
+targets/libtiff/clean_reproducer
+targets/libtiff/real_reproducer
+targets/poppler/freetype2/
+targets/poppler/out/
+targets/poppler/out_fuzz_asan/
+targets/poppler/repo/
+targets/poppler/work/
