@@ -12,7 +12,8 @@ set -euo pipefail
 # - boundary distance (ASan "is located N bytes ...")
 # - inferred OOB bytes (calculated from access size + bad addr + region)
 
-POC_DIR="${1:-$HOME/tiff_poc}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+POC_DIR="${1:-$SCRIPT_DIR/poc}"
 LOG_DIR="${2:-/tmp/tiff_poc_both_logs}"
 
 BIN_RGBA="${BIN_RGBA:-/users/hz3078/magma/targets/libtiff/out_fuzz_asan/tiff_read_rgba_fuzzer}"

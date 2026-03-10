@@ -11,10 +11,11 @@ set -euo pipefail
 #   ./run_poc_batch_rgba.sh [POC_DIR] [LOG_DIR]
 #
 # Examples:
-#   ./run_poc_batch_rgba.sh ~/tiff_poc
-#   BIN=/abs/path/tiff_read_rgba_fuzzer ./run_poc_batch_rgba.sh ~/tiff_poc /tmp/tiff_rgba_logs
+#   ./run_poc_batch_rgba.sh
+#   BIN=/abs/path/tiff_read_rgba_fuzzer ./run_poc_batch_rgba.sh ./poc /tmp/tiff_rgba_logs
 
-POC_DIR="${1:-$HOME/tiff_poc}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+POC_DIR="${1:-$SCRIPT_DIR/poc}"
 LOG_DIR="${2:-/tmp/tiff_poc_rgba_logs}"
 BIN="${BIN:-/users/hz3078/magma/targets/libtiff/out_fuzz_asan/tiff_read_rgba_fuzzer}"
 
