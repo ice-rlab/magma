@@ -6,14 +6,15 @@ files.
 
 The commands below assume:
 
-- repo root: `/users/hz3078/magma`
+- repo root: `$MAGMA_ROOT`
 - shell: `bash`
 - architecture: `aarch64`
 
 ## 1. Common setup
 
 ```bash
-cd /users/hz3078/magma
+export MAGMA_ROOT=/path/to/magma
+cd "$MAGMA_ROOT"
 ```
 
 Install target dependencies:
@@ -35,7 +36,7 @@ bash "$PWD/magma/apply_patches.sh"
 Fetch source:
 
 ```bash
-cd /users/hz3078/magma
+cd "$MAGMA_ROOT"
 export TARGET="$PWD/targets/poppler"
 bash "$TARGET/fetch.sh"
 bash "$PWD/magma/apply_patches.sh"
@@ -77,7 +78,7 @@ ASAN_OPTIONS='abort_on_error=1:symbolize=1:detect_leaks=0' \
 Fetch source:
 
 ```bash
-cd /users/hz3078/magma
+cd "$MAGMA_ROOT"
 export TARGET="$PWD/targets/libtiff"
 bash "$TARGET/fetch.sh"
 bash "$PWD/magma/apply_patches.sh"
@@ -113,13 +114,13 @@ ASAN_OPTIONS='abort_on_error=1:symbolize=1:detect_leaks=0' \
 Replay only `tiff_read_rgba_fuzzer`:
 
 ```bash
-bash targets/libtiff/run_poc_batch_rgba.sh ~/tiff_poc /tmp/tiff_poc_rgba_logs
+bash targets/libtiff/run_poc_batch_rgba.sh /path/to/tiff_poc /tmp/tiff_poc_rgba_logs
 ```
 
 Replay both `tiff_read_rgba_fuzzer` and `tiffcp`:
 
 ```bash
-bash targets/libtiff/run_poc_batch_both.sh ~/tiff_poc /tmp/tiff_poc_both_logs
+bash targets/libtiff/run_poc_batch_both.sh /path/to/tiff_poc /tmp/tiff_poc_both_logs
 ```
 
 Main outputs:
@@ -142,7 +143,7 @@ checking instead, use the normal MAGMA build flow and `runonce.sh`.
 Typical replay command:
 
 ```bash
-cd /users/hz3078/magma
+cd "$MAGMA_ROOT"
 OUT=/tmp/magma_iso_libtiff/targets/libtiff/out_magma_canary
 PROGRAM=targets/libtiff
 POC=/path/to/sample.tif
