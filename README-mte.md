@@ -51,6 +51,31 @@ Most of these PoCs come from the official MAGMA OSF archive provided via:
 The local image `magma_poc.png` is included to show the bundled PoC layout used
 by this branch.
 
+ASan replay statistics for the bundled `libtiff` PoCs are stored under:
+
+- `data/asan_results/libtiff/asan_hits_by_group_stats.tsv`
+- `data/asan_results/libtiff/heap_buffer_overflow_hits.tsv`
+- `data/asan_results/libtiff/heap_buffer_overflow_group_stats.tsv`
+- `data/asan_results/libtiff/heap_buffer_overflow_le16.tsv`
+
+Summary of ASan-detected files by PoC group:
+
+| Group | Total files | ASan hit files | `tiff_read_rgba_fuzzer` hits | `tiffcp` hits |
+| --- | ---: | ---: | ---: | ---: |
+| `AAH009` | 6 | 6 | 6 | 0 |
+| `AAH010` | 282 | 40 | 37 | 38 |
+| `AAH016` | 149 | 7 | 5 | 2 |
+| `AAH020` | 265 | 0 | 0 | 0 |
+
+Summary of `heap-buffer-overflow` files:
+
+| Group | Files with `heap-buffer-overflow` |
+| --- | ---: |
+| `AAH009` | 6 |
+| `AAH010` | 24 |
+| `AAH016` | 7 |
+| `AAH020` | 0 |
+
 ## 3. Build poppler with AFL++ and ASan
 
 Fetch source:
