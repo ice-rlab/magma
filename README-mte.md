@@ -41,7 +41,9 @@ This repository now includes the PoCs used in this workflow:
 - `targets/libtiff/poc/AAH010`
 - `targets/libtiff/poc/AAH016`
 - `targets/libtiff/poc/AAH020`
+- `targets/libtiff/poc/New-pocs`
 - `targets/poppler/poc/JCH201`
+- `targets/poppler/poc/New-pocs`
 
 Most of these PoCs come from the official MAGMA OSF archive provided via:
 
@@ -51,21 +53,24 @@ Most of these PoCs come from the official MAGMA OSF archive provided via:
 The local image `magma_poc.png` is included to show the bundled PoC layout used
 by this branch.
 
-ASan replay statistics for the bundled `libtiff` PoCs are stored under:
+ASan replay statistics for the bundled `libtiff` PoCs, including `New-pocs`,
+are stored under:
 
 - `data/asan_results/libtiff/asan_hits_by_group_stats.tsv`
 - `data/asan_results/libtiff/heap_buffer_overflow_hits.tsv`
 - `data/asan_results/libtiff/heap_buffer_overflow_group_stats.tsv`
 - `data/asan_results/libtiff/heap_buffer_overflow_le16.tsv`
+- `data/asan_results/poppler/asan_hits_by_group_stats.tsv`
+- `data/asan_results/poppler/asan_summary.tsv`
 
 Summary of ASan-detected files by PoC group:
 
 | Group | Total files | ASan hit files | `tiff_read_rgba_fuzzer` hits | `tiffcp` hits |
 | --- | ---: | ---: | ---: | ---: |
 | `AAH009` | 6 | 6 | 6 | 0 |
-| `AAH010` | 282 | 40 | 37 | 38 |
-| `AAH016` | 149 | 7 | 5 | 2 |
-| `AAH020` | 265 | 0 | 0 | 0 |
+| `AAH010` | 321 | 40 | 37 | 38 |
+| `AAH016` | 186 | 13 | 11 | 6 |
+| `AAH020` | 1147 | 0 | 0 | 0 |
 
 Summary of `heap-buffer-overflow` files:
 
@@ -73,8 +78,15 @@ Summary of `heap-buffer-overflow` files:
 | --- | ---: |
 | `AAH009` | 6 |
 | `AAH010` | 24 |
-| `AAH016` | 7 |
+| `AAH016` | 13 |
 | `AAH020` | 0 |
+
+Summary of ASan-detected files for `poppler` PoCs:
+
+| Group | Total files | ASan hit files | `pdf_fuzzer` hits | `pdfimages` hits | `pdftoppm` hits |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `AAH048` | 3 | 1 | 0 | 0 | 1 |
+| `JCH201` | 27 | 27 | 2 | 13 | 12 |
 
 ## 3. Build poppler with AFL++ and ASan
 
