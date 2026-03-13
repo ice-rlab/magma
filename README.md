@@ -11,10 +11,25 @@ The selected PoVs are stored under:
 - `selected-povs/asan_detected/libtiff_tiff_read_rgba_fuzzer`
 - `selected-povs/asan_detected/poppler_pdf_fuzzer`
 
+PoV counts in this branch:
+
+- `libtiff_tiff_read_rgba_fuzzer`: `54`
+- `poppler_pdf_fuzzer`: `2`
+
+Breakdown by directory:
+
+- `libtiff_tiff_read_rgba_fuzzer/AAH009`: `6`
+- `libtiff_tiff_read_rgba_fuzzer/AAH010`: `37`
+- `libtiff_tiff_read_rgba_fuzzer/AAH016`: `5`
+- `libtiff_tiff_read_rgba_fuzzer/New-pocs`: `6`
+- `poppler_pdf_fuzzer/New-pocs`: `2`
+
 These samples were filtered to satisfy both conditions:
 
 - they reproduce under the target executable
 - they trigger an ASan-detectable failure under that executable
+
+![MAGMA PoC overview](magma_poc.png)
 
 ## 1. Dependencies
 
