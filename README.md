@@ -20,9 +20,8 @@ Breakdown by directory:
 
 - `libtiff_tiff_read_rgba_fuzzer/AAH009`: `6`
 - `libtiff_tiff_read_rgba_fuzzer/AAH010`: `37`
-- `libtiff_tiff_read_rgba_fuzzer/AAH016`: `5`
-- `libtiff_tiff_read_rgba_fuzzer/New-pocs`: `6`
-- `poppler_pdf_fuzzer/New-pocs`: `2`
+- `libtiff_tiff_read_rgba_fuzzer/AAH016`: `11`
+- `poppler_pdf_fuzzer/JCH201`: `2`
 
 These samples were filtered to satisfy both conditions:
 
@@ -107,7 +106,7 @@ Run one selected PoV:
 ```bash
 ASAN_OPTIONS='abort_on_error=1:symbolize=1:detect_leaks=0' \
   targets/poppler/out_fuzz_asan/pdf_fuzzer \
-  selected-povs/asan_detected/poppler_pdf_fuzzer/New-pocs/JCH201/honggfuzz_poppler_pdf_fuzzer_JCH201.Wxd
+  selected-povs/asan_detected/poppler_pdf_fuzzer/JCH201/honggfuzz_poppler_pdf_fuzzer_JCH201.Wxd
 ```
 
 ## 5. Notes
