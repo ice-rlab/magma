@@ -38,6 +38,22 @@ looking only at one runtime.
 - `results/`: saved logs and CSV summaries
 - `results/reference/`: minimal committed summaries and showcase NanoTag logs
 
+## Evaluated Bug Set
+
+The selected PoVs in this directory do not span all MAGMA bugs for `libtiff`
+and `poppler`. They only cover the four bug IDs listed below:
+
+| Library | Executable | Magma bug id | Target-local bug id | CVE | Bug type | Selected PoVs | Source fuzzer(s) |
+| --- | --- | --- | --- | --- | --- | ---: | --- |
+| libtiff | `tiff_read_rgba_fuzzer` | `AAH009` | `TIF001` | `CVE-2016-9535` | Heap buffer overflow | 6 | `moptafl` x6 |
+| libtiff | `tiff_read_rgba_fuzzer` | `AAH010` | `TIF002` | `CVE-2016-5314` | Heap buffer overflow | 37 | `moptafl` x37 |
+| libtiff | `tiff_read_rgba_fuzzer` | `AAH016` | `TIF008` | `CVE-2015-8784` | Heap buffer overflow | 11 | `afl` x2, `aflfast` x3, `honggfuzz` x1, `moptafl` x5 |
+| poppler | `pdf_fuzzer` | `JCH201` | `PDF011` | `CVE-2019-7310` | Heap buffer overflow | 2 | `honggfuzz` x2 |
+
+The `AAH*` and `JCH*` names come from the appendix table in the MAGMA paper.
+The `TIF*` and `PDF*` names come from the MAGMA bug catalog. The mapping above
+is obtained by matching their shared CVE entries.
+
 ## Build
 
 Build both targets and install dependencies if needed:
@@ -138,6 +154,15 @@ Summary:
 - `baseline`: `56` total, `51` signal, `5` clean
 - `nanotag`: `56` total, `53` detected, `3` clean
 
+Per-bug aggregate results:
+
+| Library | Executable | Magma bug id | CVE | PoVs | `none` | `baseline` | `nanotag` | Interpretation |
+| --- | --- | --- | --- | ---: | --- | --- | --- | --- |
+| libtiff | `tiff_read_rgba_fuzzer` | `AAH009` | `CVE-2016-9535` | 6 | 1 clean, 5 signal | 6 signal | 6 detected | Most PoVs already crash in plain execution, so this bug is weak evidence for runtime-only detection. |
+| libtiff | `tiff_read_rgba_fuzzer` | `AAH010` | `CVE-2016-5314` | 37 | 14 clean, 23 signal | 2 clean, 35 signal | 37 detected | This bug family contains the only two `baseline miss / nanotag hit` samples in the selected set. |
+| libtiff | `tiff_read_rgba_fuzzer` | `AAH016` | `CVE-2015-8784` | 11 | 8 clean, 3 signal | 3 clean, 8 signal | 8 detected, 3 clean | Mixed behavior across PoV sources; NanoTag does not fully close the gap here. |
+| poppler | `pdf_fuzzer` | `JCH201` | `CVE-2019-7310` | 2 | 2 clean | 2 signal | 2 detected | Cleanest bug-level example where runtime instrumentation changes outcome from clean to detected. |
+
 ## Result Categories
 
 ### A. PoVs That Already Crash In `none`
@@ -148,9 +173,18 @@ These are not useful as the strongest baseline-vs-NanoTag demonstrations,
 because plain execution is already unstable. They still matter operationally,
 but they do not isolate the contribution of the runtime as cleanly.
 
+Bug-level composition of this category:
+
+| Magma bug id | Executable | CVE | Plain-unstable PoVs |
+| --- | --- | --- | ---: |
+| `AAH009` | `tiff_read_rgba_fuzzer` | `CVE-2016-9535` | 5 / 6 |
+| `AAH010` | `tiff_read_rgba_fuzzer` | `CVE-2016-5314` | 23 / 37 |
+| `AAH016` | `tiff_read_rgba_fuzzer` | `CVE-2015-8784` | 3 / 11 |
+| `JCH201` | `pdf_fuzzer` | `CVE-2019-7310` | 0 / 2 |
+
 ### B. PoVs That Are Clean In `none`, Signal In `baseline`, And Are Reported By `nanotag`
 
-There are `21` PoVs in this category.
+There are `23` PoVs in this category.
 
 Representative examples:
 
@@ -163,9 +197,26 @@ Representative examples:
 These are good candidates when the goal is to show that injecting an MTE-aware
 runtime changes the behavior compared with plain execution.
 
+Bug-level composition of this category:
+
+| Magma bug id | Executable | CVE | `none=clean, baseline=signal, nanotag=detected` |
+| --- | --- | --- | ---: |
+| `AAH009` | `tiff_read_rgba_fuzzer` | `CVE-2016-9535` | 1 |
+| `AAH010` | `tiff_read_rgba_fuzzer` | `CVE-2016-5314` | 12 |
+| `AAH016` | `tiff_read_rgba_fuzzer` | `CVE-2015-8784` | 8 |
+| `JCH201` | `pdf_fuzzer` | `CVE-2019-7310` | 2 |
+
 ### C. PoVs Missed By `baseline` But Detected By `nanotag`
 
-There are `2` PoVs in this category:
+There are `2` PoVs in this category, and both belong to the same MAGMA bug:
+
+- executable: `tiff_read_rgba_fuzzer`
+- Magma bug id: `AAH010`
+- target-local bug id: `TIF002`
+- CVE: `CVE-2016-5314`
+- bug type: heap buffer overflow
+
+The two PoVs are:
 
 1. `selected-povs/asan_detected/libtiff_tiff_read_rgba_fuzzer/AAH010/moptafl_libtiff_tiff_read_rgba_fuzzer_AAH010.kh9`
 2. `selected-povs/asan_detected/libtiff_tiff_read_rgba_fuzzer/AAH010/moptafl_libtiff_tiff_read_rgba_fuzzer_AAH010.x6L`
@@ -184,6 +235,12 @@ Observed behavior:
 - `none = clean`
 - `baseline = clean`
 - `nanotag = detected`
+- source fuzzer: `moptafl`
+- executable: `tiff_read_rgba_fuzzer`
+- Magma bug id: `AAH010`
+- target-local bug id: `TIF002`
+- CVE: `CVE-2016-5314`
+- bug type: heap buffer overflow
 
 This is the cleanest project-internal example of:
 
@@ -207,6 +264,11 @@ headline example because:
 - `none = SIGABRT`
 - `baseline = clean`
 - `nanotag = detected`
+- source fuzzer: `moptafl`
+- executable: `tiff_read_rgba_fuzzer`
+- Magma bug id: `AAH010`
+- target-local bug id: `TIF002`
+- CVE: `CVE-2016-5314`
 
 Its committed NanoTag log is:
 
@@ -238,8 +300,11 @@ definitely MTE detections", because many PoVs are already unstable in `none`.
 It does support the stronger and cleaner project claim that:
 
 - NanoTag reports the vast majority of the selected PoVs in this environment
-- At least one PoV (`AAH010.x6L`) is clean in both `none` and `baseline`, but
-  is explicitly reported by NanoTag
+- One entire poppler bug (`JCH201` / `PDF011` / `CVE-2019-7310`) is clean in
+  `none` and fully detected by both injected runtimes
+- At least one libtiff PoV (`AAH010.x6L`, belonging to `TIF002` /
+  `CVE-2016-5314`) is clean in both `none` and `baseline`, but is explicitly
+  reported by NanoTag
 
 For project documentation and demos, `AAH010.x6L` should be the first case to
 show.

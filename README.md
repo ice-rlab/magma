@@ -23,6 +23,19 @@ Breakdown by directory:
 - `libtiff_tiff_read_rgba_fuzzer/AAH016`: `11`
 - `poppler_pdf_fuzzer/JCH201`: `2`
 
+Bug mapping for the selected PoVs:
+
+| Target | Executable | Magma bug id | Target-local bug id | CVE | Bug type | Selected PoVs | Source fuzzer(s) |
+| --- | --- | --- | --- | --- | --- | ---: | --- |
+| libtiff | `tiff_read_rgba_fuzzer` | `AAH009` | `TIF001` | `CVE-2016-9535` | Heap buffer overflow | 6 | `moptafl` x6 |
+| libtiff | `tiff_read_rgba_fuzzer` | `AAH010` | `TIF002` | `CVE-2016-5314` | Heap buffer overflow | 37 | `moptafl` x37 |
+| libtiff | `tiff_read_rgba_fuzzer` | `AAH016` | `TIF008` | `CVE-2015-8784` | Heap buffer overflow | 11 | `afl` x2, `aflfast` x3, `honggfuzz` x1, `moptafl` x5 |
+| poppler | `pdf_fuzzer` | `JCH201` | `PDF011` | `CVE-2019-7310` | Heap buffer overflow | 2 | `honggfuzz` x2 |
+
+The `AAH*` and `JCH*` identifiers come from the Magma paper appendix. The
+`TIF*` and `PDF*` identifiers come from the Magma bug catalog. The table above
+aligns them by matching the shared CVE entry.
+
 These samples were filtered to satisfy both conditions:
 
 - they reproduce under the target executable
@@ -147,6 +160,15 @@ Current reference summary:
 - `baseline`: `56` total, `51` signal, `5` clean
 - `nanotag`: `56` total, `53` detected, `3` clean
 
+Per-bug runtime summary:
+
+| Executable | Magma bug id | CVE | PoVs | `none` | `baseline` | `nanotag` | Notes |
+| --- | --- | --- | ---: | --- | --- | --- | --- |
+| `tiff_read_rgba_fuzzer` | `AAH009` | `CVE-2016-9535` | 6 | 1 clean, 5 signal | 6 signal | 6 detected | Most PoVs already unstable in plain execution. |
+| `tiff_read_rgba_fuzzer` | `AAH010` | `CVE-2016-5314` | 37 | 14 clean, 23 signal | 2 clean, 35 signal | 37 detected | The only `baseline miss / nanotag hit` PoVs in this branch belong to this bug. |
+| `tiff_read_rgba_fuzzer` | `AAH016` | `CVE-2015-8784` | 11 | 8 clean, 3 signal | 3 clean, 8 signal | 8 detected, 3 clean | Mixed results across source fuzzers. |
+| `pdf_fuzzer` | `JCH201` | `CVE-2019-7310` | 2 | 2 clean | 2 signal | 2 detected | Cleanest per-bug evidence that a runtime changes behavior. |
+
 The strongest demonstration case in this branch is:
 
 - `selected-povs/asan_detected/libtiff_tiff_read_rgba_fuzzer/AAH010/moptafl_libtiff_tiff_read_rgba_fuzzer_AAH010.x6L`
@@ -159,6 +181,17 @@ Observed behavior for `AAH010.x6L`:
 
 This is the clearest project-internal example of a baseline miss that NanoTag
 reports.
+
+The second baseline miss detected by NanoTag is:
+
+- `selected-povs/asan_detected/libtiff_tiff_read_rgba_fuzzer/AAH010/moptafl_libtiff_tiff_read_rgba_fuzzer_AAH010.kh9`
+
+Both baseline misses therefore belong to the same underlying bug:
+
+- executable: `tiff_read_rgba_fuzzer`
+- Magma bug id: `AAH010`
+- target-local bug id: `TIF002`
+- CVE: `CVE-2016-5314`
 
 ## 6. Notes
 
