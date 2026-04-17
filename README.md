@@ -1,6 +1,6 @@
-# Selected ASan PoVs for MAGMA v1.2
+# Selected ASan PoVs for MAGMA v1.4
 
-This branch is based on `origin/v1.2` and only keeps a focused PoV set for two
+This branch is based on `origin/v1.3` and keeps a focused PoV set for two
 executables:
 
 - `libtiff`: `tiff_read_rgba_fuzzer`
@@ -109,8 +109,62 @@ ASAN_OPTIONS='abort_on_error=1:symbolize=1:detect_leaks=0' \
   selected-povs/asan_detected/poppler_pdf_fuzzer/JCH201/honggfuzz_poppler_pdf_fuzzer_JCH201.Wxd
 ```
 
-## 5. Notes
+## 5. MTE and NanoTag Evaluation
+
+This branch also includes a local evaluation workflow under
+[`mte-eval/`](mte-eval/) for testing the selected PoVs on a Pixel-class MTE
+environment with three runtime modes:
+
+- `none`: plain execution
+- `baseline`: baseline MTE-enabled Scudo via `LD_PRELOAD`
+- `nanotag`: NanoTag handler plus NanoTag Scudo via `LD_PRELOAD`
+
+Build the local target runners:
+
+```bash
+cd /root/magma/mte-eval
+INSTALL_DEPS=1 ./build_targets.sh
+```
+
+Run the full comparison:
+
+```bash
+cd /root/magma/mte-eval
+./run_all_runtimes.sh
+```
+
+Reference material committed in this branch:
+
+- [`mte-eval/README.md`](mte-eval/README.md)
+- [`mte-eval/results/reference/none_summary.csv`](mte-eval/results/reference/none_summary.csv)
+- [`mte-eval/results/reference/baseline_summary.csv`](mte-eval/results/reference/baseline_summary.csv)
+- [`mte-eval/results/reference/nanotag_summary.csv`](mte-eval/results/reference/nanotag_summary.csv)
+- [`mte-eval/results/reference/AAH010.x6L.nanotag.stdout`](mte-eval/results/reference/AAH010.x6L.nanotag.stdout)
+
+Current reference summary:
+
+- `none`: `56` total, `31` signal, `25` clean
+- `baseline`: `56` total, `51` signal, `5` clean
+- `nanotag`: `56` total, `53` detected, `3` clean
+
+The strongest demonstration case in this branch is:
+
+- `selected-povs/asan_detected/libtiff_tiff_read_rgba_fuzzer/AAH010/moptafl_libtiff_tiff_read_rgba_fuzzer_AAH010.x6L`
+
+Observed behavior for `AAH010.x6L`:
+
+- `none = clean`
+- `baseline = clean`
+- `nanotag = detected`
+
+This is the clearest project-internal example of a baseline miss that NanoTag
+reports.
+
+## 6. Notes
 
 - This branch intentionally does not include the broader MAGMA workflow. It is
   reduced to the two binaries and the PoVs that were confirmed to trip ASan.
-- The build scripts only produce `tiff_read_rgba_fuzzer` and `pdf_fuzzer`.
+- The build scripts under `targets/` only produce `tiff_read_rgba_fuzzer` and
+  `pdf_fuzzer`.
+- The `mte-eval/` directory contains a separate local workflow for runtime
+  comparison on MTE-capable hardware; it is not part of upstream MAGMA.
