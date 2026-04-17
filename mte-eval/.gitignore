@@ -1,0 +1,10 @@
+work/
+out/
+
+results/*
+!results/reference/
+!results/reference/none_summary.csv
+!results/reference/baseline_summary.csv
+!results/reference/nanotag_summary.csv
+!results/reference/AAH010.x6L.nanotag.stdout
+!results/reference/AAH010.kh9.nanotag.stdout
